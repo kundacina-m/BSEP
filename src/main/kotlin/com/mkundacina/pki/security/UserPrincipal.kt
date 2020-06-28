@@ -1,6 +1,6 @@
 package com.mkundacina.pki.security
 
-import com.mkundacina.pki.model.User
+import com.mkundacina.pki.model.entities.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -30,6 +30,6 @@ class UserPrincipal(private val user: User) : UserDetails {
     override fun isAccountNonExpired() = true
     override fun isAccountNonLocked() = true
     override fun isCredentialsNonExpired() = true
-    override fun isEnabled() = user.active == 1
+    override fun isEnabled() = user.active
 
 }

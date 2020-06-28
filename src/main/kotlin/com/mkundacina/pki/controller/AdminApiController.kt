@@ -1,7 +1,7 @@
 package com.mkundacina.pki.controller
 
 import com.mkundacina.pki.repository.UserRepository
-import com.mkundacina.pki.model.User
+import com.mkundacina.pki.model.entities.User
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,7 +31,7 @@ class AdminApiController(
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("getUser/{username}")
     fun getUser(@PathVariable username: String): User? {
-        return userRepository.findByUsername(username)
+        return userRepository.findByUserName(username)
     } // ^^^^^^^^^^^^^^^^^^^^^
 
 }

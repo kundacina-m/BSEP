@@ -1,6 +1,5 @@
-package com.mkundacina.pki.model
+package com.mkundacina.pki.model.entities
 
-import java.util.*
 import javax.persistence.*
 import kotlin.collections.ArrayList
 
@@ -17,8 +16,6 @@ data class Certificate(
     @Column(name = "serialNumberIssuer", nullable = false)
     val serialNumberIssuer: String,
 
-    @Column(name = "commonName", nullable = false)
-    val commonName: String,
 
     @Column(name = "organization", nullable = false, unique = true)
     val organization: String,
@@ -30,10 +27,10 @@ data class Certificate(
     val email: String,
 
     @Column(name = "startDate", nullable = false)
-    val startDate: Date,
+    val startDate: String,
 
     @Column(name = "endDate", nullable = false)
-    val endDate: Date,
+    val endDate: String,
 
     @Column(name = "ca", nullable = false)
     val isCA: Boolean = true,
@@ -52,6 +49,4 @@ data class Certificate(
 
     @Column(name = "revocationTimestamp", nullable = true)
     var revocationTimestamp : String? = null
-) {
-
-}
+)

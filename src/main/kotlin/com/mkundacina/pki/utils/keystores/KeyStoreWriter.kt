@@ -1,13 +1,13 @@
-package com.mkundacina.pki.keystores
+package com.mkundacina.pki.utils.keystores
 
-import org.springframework.stereotype.Component
-import org.springframework.util.ResourceUtils
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.nio.file.Paths
-import java.security.*
+import java.security.KeyStore
+import java.security.KeyStoreException
+import java.security.NoSuchAlgorithmException
+import java.security.PrivateKey
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 
@@ -18,27 +18,29 @@ object KeyStoreWriter {
     // - Sertifikati koji ukljucuju javni kljuc
     // - Privatni kljucevi
     // - Tajni kljucevi, koji se koriste u simetricnima siframa
-
-    lateinit var keyStore: KeyStore
+    val keyStorePassword = "password".toCharArray()
 
     init {
-        try {
-            keyStore = KeyStore.getInstance("JKS", "SUN")
-        } catch (e: KeyStoreException) {
-            e.printStackTrace()
-        } catch (e: NoSuchProviderException) {
-            e.printStackTrace()
+        KeyStore.getInstance("JKS", "SUN").run {
+            load(null, keyStorePassword)
+            store(FileOutputStream("cert_authority.jks"), keyStorePassword)
+            store(FileOutputStream("end_entity.jks"), keyStorePassword)
         }
     }
+
+    val keyStore: KeyStore = KeyStore.getInstance("JKS", "SUN")
+
 
     fun loadKeyStore(fileName: String?, password: CharArray) {
         try {
             if (fileName != null) {
                 println("File name $fileName password $password")
-                keyStore.load(FileInputStream(Paths.get(ResourceUtils.getFile("classpath:").toString() + "\\..\\..\\src\\main\\resources").toRealPath().toString() + "\\" + fileName), password)
+                keyStore.load(FileInputStream(fileName), password)
             } else {
                 keyStore.load(null, password)
             }
+        } catch (e: NoSuchFileException) {
+            keyStore.load(null, password)
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
         } catch (e: CertificateException) {
@@ -50,9 +52,9 @@ object KeyStoreWriter {
         }
     }
 
-    fun saveKeyStore(fileName: String, password: CharArray?) {
+    fun saveKeyStore(fileName: String, password: CharArray) {
         try {
-            keyStore.store(FileOutputStream(Paths.get(ResourceUtils.getFile("classpath:").toString() + "\\..\\..\\src\\main\\resources").toRealPath().toString() + "\\" + fileName), password)
+            keyStore.store(FileOutputStream(fileName), password)
         } catch (e: KeyStoreException) {
             e.printStackTrace()
         } catch (e: NoSuchAlgorithmException) {
@@ -66,11 +68,16 @@ object KeyStoreWriter {
         }
     }
 
-    fun write(alias: String?, privateKey: PrivateKey?, password: CharArray?, certificate: Array<Certificate?>?) {
+    fun write(alias: String, privateKey: PrivateKey, keyPassword: CharArray, certificate: Array<Certificate>) {
+        keyStore.setKeyEntry(alias, privateKey, keyPassword, certificate)
+    }
+
+    fun getChain(alias: String?): Array<Certificate?>? {
         try {
-            keyStore.setKeyEntry(alias, privateKey, password, certificate)
+            return keyStore.getCertificateChain(alias)
         } catch (e: KeyStoreException) {
             e.printStackTrace()
         }
+        return null // bacio eksepsn
     }
 }

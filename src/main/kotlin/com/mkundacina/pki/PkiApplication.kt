@@ -9,15 +9,16 @@ import org.springframework.boot.runApplication
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory
 import org.springframework.context.annotation.Bean
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.apache.logging.log4j.kotlin.logger
+
+object logger { fun get() = org.apache.logging.log4j.kotlin.logger("MyLogger")}
 
 @SpringBootApplication
 class PkiApplication
-
 fun main(args: Array<String>) {
     runApplication<PkiApplication>(*args)
+    logger.get().info("----------------------------------------")
+    logger.get().info("AppStarted")
 }
 
 @Bean
